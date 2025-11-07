@@ -31,6 +31,11 @@ public class UserServices {
         return toResposeUserDTO(usuario);
     }
 
+    public UserResponseDTO cadastrarUsuario(UserDTO userDTO){
+        UserModel userModel = toEntity(userDTO);
+        userRepository.save(userModel);
+        return toResposeUserDTO(userModel);
+    }
     // Atualizar --- Depois melhoro as mensagens.
     public UserResponseDTO atualizaUsuario(Long id, UserDTO userDTO){
         UserModel usuario = userRepository.findById(id)
@@ -51,6 +56,14 @@ public class UserServices {
     }
 
     // Conversoes
+
+    public UserModel toEntity(UserDTO userDTO){
+        UserModel userModel = new UserModel();
+        userModel.setNome(userDTO.nome);
+        userModel.setEmail(userDTO.email);
+        return userModel;
+    }
+
     public UserResponseDTO toResposeUserDTO(UserModel userModel){
         UserResponseDTO dto = new UserResponseDTO();
         dto.id = userModel.getId();
