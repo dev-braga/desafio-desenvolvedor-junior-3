@@ -23,6 +23,6 @@ public class PostsModel {
     private String conteudo;
     @ManyToOne
     @JoinColumn(name = "usuario_id")
-    private List<UserModel> autor;
+    private UserModel autor;
 
 }

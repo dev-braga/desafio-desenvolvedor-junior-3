@@ -5,6 +5,9 @@ import com.desafio.Desafio.dto.UserResponseDTO;
 import com.desafio.Desafio.model.UserModel;
 import com.desafio.Desafio.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,9 +31,10 @@ public class UserController {
         return usuario;
     }
 
-    @PostMapping
-    public UserResponseDTO cadastrarUsuario(@RequestBody UserDTO dto){
-        return userServices.cadastrarUsuario(dto);
+    @PostMapping("/register")
+    public ResponseEntity<UserResponseDTO> cadastrarUsuario(@RequestBody UserDTO dto){
+       UserResponseDTO response = userServices.cadastrarUsuario(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 }
