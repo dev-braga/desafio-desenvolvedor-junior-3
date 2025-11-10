@@ -5,6 +5,7 @@ import com.desafio.Desafio.dto.UserLoginDTO;
 import com.desafio.Desafio.dto.UserResponseDTO;
 import com.desafio.Desafio.model.UserModel;
 import com.desafio.Desafio.services.UserServices;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -39,9 +40,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@RequestBody UserLoginDTO dto){
+    public ResponseEntity<UserResponseDTO> login(@RequestBody UserLoginDTO dto, HttpSession session){
         try{
             UserResponseDTO response = userServices.login(dto);
+            session.setAttribute("usuario", response);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

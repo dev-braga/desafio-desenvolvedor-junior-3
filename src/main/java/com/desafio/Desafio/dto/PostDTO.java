@@ -16,6 +16,4 @@ import java.util.List;
 public class PostDTO {
     public String titulo;
     public String conteudo;
-    public LocalDateTime dataPost;
-    public UserModel autor;
 }
