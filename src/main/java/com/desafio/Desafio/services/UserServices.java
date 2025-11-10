@@ -1,14 +1,18 @@
 package com.desafio.Desafio.services;
 
 import com.desafio.Desafio.dto.UserDTO;
+import com.desafio.Desafio.dto.UserLoginDTO;
 import com.desafio.Desafio.dto.UserResponseDTO;
 import com.desafio.Desafio.model.UserModel;
 import com.desafio.Desafio.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,6 +20,23 @@ public class UserServices {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    // método de login
+    public UserResponseDTO login(UserLoginDTO loginDTO){
+        Optional<UserModel> userOpt = userRepository.findByEmail(loginDTO.getEmail());
+
+        if(userOpt.isEmpty()){
+            throw new RuntimeException("Usuário não encontrado");
+        }
+        UserModel user = userOpt.get();
+        if(!passwordEncoder.matches(loginDTO.getSenha(), user.getSenha())){
+            throw new RuntimeException("Senha incorreta");
+        }
+        return toResposeUserDTO(user);
+    }
 
     // Busca todos os usuarios
     public List<UserResponseDTO> listarUsuarios(){
@@ -61,6 +82,7 @@ public class UserServices {
         UserModel userModel = new UserModel();
         userModel.setNome(userDTO.nome);
         userModel.setEmail(userDTO.email);
+        userModel.setSenha(passwordEncoder.encode(userDTO.senha));
         return userModel;
     }
 

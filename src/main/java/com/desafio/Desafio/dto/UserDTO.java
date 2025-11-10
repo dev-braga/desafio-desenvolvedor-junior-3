@@ -13,5 +13,6 @@ import java.util.List;
 public class UserDTO {
     public String nome;
     public String email;
+    public String senha;
     public List<PostsModel> postagens;
 }

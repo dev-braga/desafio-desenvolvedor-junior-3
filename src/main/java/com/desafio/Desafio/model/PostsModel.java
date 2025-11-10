@@ -25,4 +25,43 @@ public class PostsModel {
     @JoinColumn(name = "usuario_id")
     private UserModel autor;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getDataPost() {
+        return dataPost;
+    }
+
+    public void setDataPost(LocalDateTime dataPost) {
+        this.dataPost = dataPost;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getConteudo() {
+        return conteudo;
+    }
+
+    public void setConteudo(String conteudo) {
+        this.conteudo = conteudo;
+    }
+
+    public UserModel getAutor() {
+        return autor;
+    }
+
+    public void setAutor(UserModel autor) {
+        this.autor = autor;
+    }
 }

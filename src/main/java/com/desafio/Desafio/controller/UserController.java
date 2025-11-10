@@ -1,6 +1,7 @@
 package com.desafio.Desafio.controller;
 
 import com.desafio.Desafio.dto.UserDTO;
+import com.desafio.Desafio.dto.UserLoginDTO;
 import com.desafio.Desafio.dto.UserResponseDTO;
 import com.desafio.Desafio.model.UserModel;
 import com.desafio.Desafio.services.UserServices;
@@ -35,6 +36,16 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> cadastrarUsuario(@RequestBody UserDTO dto){
        UserResponseDTO response = userServices.cadastrarUsuario(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDTO> login(@RequestBody UserLoginDTO dto){
+        try{
+            UserResponseDTO response = userServices.login(dto);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
 }

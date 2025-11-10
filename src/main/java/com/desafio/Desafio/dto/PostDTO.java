@@ -17,5 +17,5 @@ public class PostDTO {
     public String titulo;
     public String conteudo;
     public LocalDateTime dataPost;
-    public List<UserModel> autor;
+    public UserModel autor;
 }
