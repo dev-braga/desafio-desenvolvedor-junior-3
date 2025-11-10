@@ -6,6 +6,8 @@ import com.desafio.Desafio.dto.UserResponseDTO;
 import com.desafio.Desafio.model.UserModel;
 import com.desafio.Desafio.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,37 +27,36 @@ public class UserServices {
     private PasswordEncoder passwordEncoder;
 
     // método de login
-    public UserResponseDTO login(UserLoginDTO loginDTO){
-        Optional<UserModel> userOpt = userRepository.findByEmail(loginDTO.getEmail());
+    public UserModel login(String email, String senha){
 
-        if(userOpt.isEmpty()){
-            throw new RuntimeException("Usuário não encontrado");
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario não encontrado"));
+
+        if(!passwordEncoder.matches(senha, user.getSenha())){
+            throw new BadCredentialsException("Senha incorreta");
         }
-        UserModel user = userOpt.get();
-        if(!passwordEncoder.matches(loginDTO.getSenha(), user.getSenha())){
-            throw new RuntimeException("Senha incorreta");
-        }
-        return toResposeUserDTO(user);
+        return user;
     }
 
     // Busca todos os usuarios
     public List<UserResponseDTO> listarUsuarios(){
         return userRepository.findAll()
                 .stream()
-                .map(this::toResposeUserDTO)
+                .map(this::toResponseUserDTO)
                 .collect(Collectors.toList());
     }
     // Busca por ID
     public UserResponseDTO buscarPorId(Long id){
         UserModel usuario = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Nao achei!"));
-        return toResposeUserDTO(usuario);
+        return toResponseUserDTO(usuario);
     }
 
     public UserResponseDTO cadastrarUsuario(UserDTO userDTO){
         UserModel userModel = toEntity(userDTO);
+
         userRepository.save(userModel);
-        return toResposeUserDTO(userModel);
+        return toResponseUserDTO(userModel);
     }
     // Atualizar --- Depois melhoro as mensagens.
     public UserResponseDTO atualizaUsuario(Long id, UserDTO userDTO){
@@ -65,7 +66,7 @@ public class UserServices {
         usuario.setNome(userDTO.nome);
         usuario.setEmail(userDTO.email);
 
-        return toResposeUserDTO(usuario);
+        return toResponseUserDTO(usuario);
     }
 
     // Deletar usuarios
@@ -86,12 +87,11 @@ public class UserServices {
         return userModel;
     }
 
-    public UserResponseDTO toResposeUserDTO(UserModel userModel){
+    public UserResponseDTO toResponseUserDTO(UserModel userModel){
         UserResponseDTO dto = new UserResponseDTO();
         dto.id = userModel.getId();
         dto.nome = userModel.getNome();
         dto.email = userModel.getEmail();
-        dto.senha = userModel.getSenha();
 
         return dto;
     }

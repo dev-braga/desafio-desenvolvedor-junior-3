@@ -1,5 +1,7 @@
 package com.desafio.Desafio.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,8 +22,10 @@ public class UserModel {
     private Long id;
     private String nome;
     private String email;
+    @JsonIgnore
     private String senha;
     @OneToMany(mappedBy = "autor")
+    @JsonManagedReference
     private List<PostsModel> postagens;
 
 

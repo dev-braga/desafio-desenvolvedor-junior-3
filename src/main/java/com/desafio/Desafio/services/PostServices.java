@@ -21,6 +21,7 @@ public class PostServices {
 
     @Autowired
     private PostsRepository postsRepository;
+    @Autowired
     private UserRepository userRepository;
 
     public List<PostResponseDTO> listarPosts(){
@@ -31,14 +32,13 @@ public class PostServices {
     }
     // #### Médodo para cadastrar um Post
     public PostResponseDTO publicarPost(PostDTO postDTO, String userNameAutor){
-        // Buscar o user logado
+
         UserModel autorLogado = userRepository.findByEmail(userNameAutor)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario não encontrado!"));
 
-        PostsModel posts = new PostsModel();
+        PostsModel posts = toEntity(postDTO);
         posts.setAutor(autorLogado);
 
-        posts = toEntity(postDTO);
         postsRepository.save(posts);
         return toResponse(posts);
     }

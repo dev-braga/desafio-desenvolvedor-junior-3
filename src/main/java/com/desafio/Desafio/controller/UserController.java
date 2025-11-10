@@ -32,22 +32,24 @@ public class UserController {
         UserResponseDTO usuario = userServices.buscarPorId(id);
         return usuario;
     }
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserLoginDTO dto, HttpSession session){
+        try{
+            //UserResponseDTO response = userServices.login(dto);
+            UserModel user = userServices.login(dto.getEmail(), dto.getSenha());
+            session.setAttribute("usuario", user);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e){
+
+            System.out.println("caiu aqui. Usuario: -" + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
 
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> cadastrarUsuario(@RequestBody UserDTO dto){
        UserResponseDTO response = userServices.cadastrarUsuario(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@RequestBody UserLoginDTO dto, HttpSession session){
-        try{
-            UserResponseDTO response = userServices.login(dto);
-            session.setAttribute("usuario", response);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
     }
 
 }

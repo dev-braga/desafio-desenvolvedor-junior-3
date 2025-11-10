@@ -2,7 +2,9 @@ package com.desafio.Desafio.controller;
 
 import com.desafio.Desafio.dto.PostDTO;
 import com.desafio.Desafio.dto.PostResponseDTO;
+import com.desafio.Desafio.model.UserModel;
 import com.desafio.Desafio.services.PostServices;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +22,25 @@ public class PostController {
     private PostServices postServices;
 
     @PostMapping("/postar")
-    public ResponseEntity<PostResponseDTO> postar(@RequestBody PostDTO postDTO, @AuthenticationPrincipal
-    UserDetails userDetails){
-        PostResponseDTO dto = postServices.publicarPost(postDTO, userDetails.getUsername());
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    public ResponseEntity<?> postar(@RequestBody PostDTO postDTO, HttpSession session){
+        UserModel usuario = (UserModel) session.getAttribute("usuario");
+        if(usuario == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Faça login primeiro");
+        }
+
+        PostResponseDTO post = postServices.publicarPost(postDTO, usuario.getEmail());
+        return ResponseEntity.ok(post);
     }
-    @GetMapping("/posts")
-    public List<PostResponseDTO> listarPosts(){
+    @GetMapping
+    public ResponseEntity<?> listarPosts(HttpSession session){
+        UserModel usuario = (UserModel) session.getAttribute("usuario");
+
+        if(usuario == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Faça login primeiro!");
+        }
         List<PostResponseDTO> posts = postServices.listarPosts();
-        return postServices.listarPosts();
+
+        return ResponseEntity.ok(posts);
     }
 }
