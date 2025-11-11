@@ -1,18 +1,18 @@
 package com.desafio.Desafio.services;
 
-import com.desafio.Desafio.controller.AutorResponseDTO;
+import com.desafio.Desafio.dto.AutorResponseDTO;
 import com.desafio.Desafio.dto.PostDTO;
 import com.desafio.Desafio.dto.PostResponseDTO;
-import com.desafio.Desafio.dto.UserDTO;
+import com.desafio.Desafio.dto.PostUpdateDTO;
 import com.desafio.Desafio.model.PostsModel;
 import com.desafio.Desafio.model.UserModel;
 import com.desafio.Desafio.repository.PostsRepository;
 import com.desafio.Desafio.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,12 +25,29 @@ public class PostServices {
     @Autowired
     private UserRepository userRepository;
 
+    // #### Médodo para Listar todos os posts
     public List<PostResponseDTO> listarPosts(){
         return postsRepository.findAll()
               .stream()
               .map(this::toResponse)
               .collect(Collectors.toList());
     }
+
+    public PostsModel atualizarPost(Long id, PostUpdateDTO dto){
+        // Verificar se o post existe
+        PostsModel posts = postsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post nao encontrado"));
+
+        if(dto.getTitulo() != null && !dto.getTitulo().isBlank()){
+            posts.setTitulo(dto.getTitulo());
+        }
+        if(dto.getConteudo() != null && !dto.getConteudo().isBlank()){
+            posts.setConteudo(dto.getConteudo());
+        }
+
+        return postsRepository.save(posts);
+    }
+
     // #### Médodo para cadastrar um Post
     public PostResponseDTO publicarPost(PostDTO postDTO, String userNameAutor){
 

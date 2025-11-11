@@ -1,4 +1,4 @@
-package com.desafio.Desafio.controller;
+package com.desafio.Desafio.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -2,6 +2,8 @@ package com.desafio.Desafio.controller;
 
 import com.desafio.Desafio.dto.PostDTO;
 import com.desafio.Desafio.dto.PostResponseDTO;
+import com.desafio.Desafio.dto.PostUpdateDTO;
+import com.desafio.Desafio.model.PostsModel;
 import com.desafio.Desafio.model.UserModel;
 import com.desafio.Desafio.services.PostServices;
 import jakarta.servlet.http.HttpSession;
@@ -21,7 +23,7 @@ public class PostController {
     @Autowired
     private PostServices postServices;
 
-    @PostMapping("/postar")
+    @PostMapping
     public ResponseEntity<?> postar(@RequestBody PostDTO postDTO, HttpSession session){
         UserModel usuario = (UserModel) session.getAttribute("usuario");
         if(usuario == null){
@@ -32,12 +34,26 @@ public class PostController {
         PostResponseDTO post = postServices.publicarPost(postDTO, usuario.getEmail());
         return ResponseEntity.ok(post);
     }
+
+    // Metodo para retornar os posts pelo ID! ######
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizarPosts(HttpSession session, @PathVariable Long id, @RequestBody PostUpdateDTO dto){
+        UserModel usuario = (UserModel) session.getAttribute("usuario");
+        if(usuario == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Necessario autenticacao.");
+        }
+        PostsModel postAtualizado = postServices.atualizarPost(id, dto);
+
+        return ResponseEntity.ok(postServices.toResponse(postAtualizado));
+    }
+
+    // Metodo para retornar todos os posts! ######
     @GetMapping
     public ResponseEntity<?> listarPosts(HttpSession session){
         UserModel usuario = (UserModel) session.getAttribute("usuario");
 
         if(usuario == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Faça login primeiro!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Necessario autenticacao.");
         }
         List<PostResponseDTO> posts = postServices.listarPosts();
 
