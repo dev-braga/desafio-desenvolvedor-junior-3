@@ -1,5 +1,6 @@
 package com.desafio.Desafio.services;
 
+import com.desafio.Desafio.controller.AutorResponseDTO;
 import com.desafio.Desafio.dto.PostDTO;
 import com.desafio.Desafio.dto.PostResponseDTO;
 import com.desafio.Desafio.dto.UserDTO;
@@ -55,10 +56,14 @@ public class PostServices {
 
     public PostResponseDTO toResponse(PostsModel postsModel){
         PostResponseDTO dto = new PostResponseDTO();
-        dto.titulo = postsModel.getTitulo();
-        dto.dataPost = postsModel.getDataPost();
-        dto.conteudo = postsModel.getConteudo();
-        dto.autor = postsModel.getAutor();
+        dto.setTitulo(postsModel.getTitulo());
+        dto.setDataPost(postsModel.getDataPost());
+        dto.setConteudo(postsModel.getConteudo());
+
+        //Converter o autor do modelo para o DTO
+        AutorResponseDTO autorDTO = new AutorResponseDTO();
+        autorDTO.setNome(postsModel.getAutor().getNome());
+        dto.setAutor(autorDTO);
 
         return dto;
     }

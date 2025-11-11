@@ -38,7 +38,7 @@ public class UserController {
             //UserResponseDTO response = userServices.login(dto);
             UserModel user = userServices.login(dto.getEmail(), dto.getSenha());
             session.setAttribute("usuario", user);
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok("Login efetuado.");
         } catch (RuntimeException e){
 
             System.out.println("caiu aqui. Usuario: -" + e.getMessage());

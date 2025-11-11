@@ -6,6 +6,7 @@ import com.desafio.Desafio.dto.UserResponseDTO;
 import com.desafio.Desafio.model.UserModel;
 import com.desafio.Desafio.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,6 +36,7 @@ public class UserServices {
         if(!passwordEncoder.matches(senha, user.getSenha())){
             throw new BadCredentialsException("Senha incorreta");
         }
+
         return user;
     }
 

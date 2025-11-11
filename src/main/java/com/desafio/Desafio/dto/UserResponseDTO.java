@@ -1,5 +1,6 @@
 package com.desafio.Desafio.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ public class UserResponseDTO {
     public Long id;
     public String nome;
     public String email;
+    @JsonIgnore
     public String senha;
 
 }
