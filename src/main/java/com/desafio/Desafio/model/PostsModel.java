@@ -1,6 +1,7 @@
 package com.desafio.Desafio.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class PostsModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dataPost;
     private String titulo;
     private String conteudo;

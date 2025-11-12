@@ -9,7 +9,10 @@ import com.desafio.Desafio.model.UserModel;
 import com.desafio.Desafio.repository.PostsRepository;
 import com.desafio.Desafio.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -25,16 +28,27 @@ public class PostServices {
     @Autowired
     private UserRepository userRepository;
 
-    // #### Médodo para Listar todos os posts
-    public List<PostResponseDTO> listarPosts(){
-        return postsRepository.findAll()
-              .stream()
-              .map(this::toResponse)
-              .collect(Collectors.toList());
+    public List<PostResponseDTO> listarPosts(String ordem, boolean meus, UserModel usuarioLogado){
+       Sort sort = ordem.equalsIgnoreCase("asc")
+               ? Sort.by("dataPost").ascending()
+               : Sort.by("dataPost").descending();
+
+       List<PostsModel> posts;
+       if(meus && usuarioLogado != null){
+           // Recarrega o usuário do banco
+           UserModel usuario = userRepository.findById(usuarioLogado.getId())
+                           .orElseThrow(() -> new RuntimeException("Nao encontrado"));
+
+           postsRepository.findByAutor(usuarioLogado, sort);
+       }
+       posts = postsRepository.findAll(sort);
+        System.out.println("ID do usuário logado: " + usuarioLogado.getId());
+       return posts.stream()
+               .map(this::toResponse)
+               .toList();
     }
 
     public PostsModel atualizarPost(Long id, PostUpdateDTO dto){
-        // Verificar se o post existe
         PostsModel posts = postsRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post nao encontrado"));
 
@@ -47,15 +61,23 @@ public class PostServices {
 
         return postsRepository.save(posts);
     }
+    public void deletarPost(Long id){
+        PostsModel postAtual = postsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post nao localizado."));
 
-    // #### Médodo para cadastrar um Post
-    public PostResponseDTO publicarPost(PostDTO postDTO, String userNameAutor){
+        postsRepository.delete(postAtual);
+    }
 
-        UserModel autorLogado = userRepository.findByEmail(userNameAutor)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario não encontrado!"));
+    public PostResponseDTO publicarPost(PostDTO postDTO, HttpSession session){
+
+        UserModel usuario = (UserModel) session.getAttribute("usuario");
+        if(usuario == null){
+            throw new RuntimeException("Nao encontrado");
+        }
 
         PostsModel posts = toEntity(postDTO);
-        posts.setAutor(autorLogado);
+        posts.setAutor(usuario);
+        posts.setDataPost(LocalDateTime.now());
 
         postsRepository.save(posts);
         return toResponse(posts);

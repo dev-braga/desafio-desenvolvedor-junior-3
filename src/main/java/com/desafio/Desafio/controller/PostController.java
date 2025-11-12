@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/posts")
@@ -31,7 +32,7 @@ public class PostController {
                     .body("Faça login primeiro");
         }
 
-        PostResponseDTO post = postServices.publicarPost(postDTO, usuario.getEmail());
+        PostResponseDTO post = postServices.publicarPost(postDTO, session);
         return ResponseEntity.ok(post);
     }
 
@@ -47,16 +48,31 @@ public class PostController {
         return ResponseEntity.ok(postServices.toResponse(postAtualizado));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletarPost(HttpSession session, @PathVariable Long id){
+        UserModel usuario = (UserModel) session.getAttribute("usuario");
+        if(usuario == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Necessario autenticacao."));
+        }
+        postServices.deletarPost(id);
+        return  ResponseEntity.ok(Map.of("messagem", "Post deletado."));
+    }
+
     // Metodo para retornar todos os posts! ######
     @GetMapping
-    public ResponseEntity<?> listarPosts(HttpSession session){
+    public ResponseEntity<?> listarPosts(
+            HttpSession session,
+            @RequestParam(required = false, defaultValue = "desc") String ordem,
+            @RequestParam(required = false, defaultValue = "false") boolean meus
+    ){
         UserModel usuario = (UserModel) session.getAttribute("usuario");
+        System.out.println(usuario);
+        System.out.println(meus);
 
         if(usuario == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Necessario autenticacao.");
         }
-        List<PostResponseDTO> posts = postServices.listarPosts();
-
+        List<PostResponseDTO> posts = postServices.listarPosts(ordem, meus, usuario);
         return ResponseEntity.ok(posts);
     }
 }
