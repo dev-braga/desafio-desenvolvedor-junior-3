@@ -66,8 +66,6 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "false") boolean meus
     ){
         UserModel usuario = (UserModel) session.getAttribute("usuario");
-        System.out.println(usuario);
-        System.out.println(meus);
 
         if(usuario == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Necessario autenticacao.");

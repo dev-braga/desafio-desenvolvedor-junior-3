@@ -1,4 +1,4 @@
-package com.desafio.Desafio;
+package com.desafio.Desafio.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +27,9 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frame -> frame.disable())) // necessário pro H2
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll() // libera o H2 Console
-                        .anyRequest().permitAll() // ou .authenticated() se quiser proteger o resto
+                        .anyRequest().permitAll()
                 )
-                .formLogin(Customizer.withDefaults()); // mantém a tela padrão de login (opcional)
+                .formLogin(Customizer.withDefaults());
 
         return httpSecurity.build();
     }

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -20,12 +21,6 @@ public class UserController {
 
     @Autowired
     private UserServices userServices;
-
-    @GetMapping
-    public List<UserResponseDTO> pegarUsuarios(){
-        List<UserResponseDTO> usuarios = userServices.listarUsuarios();
-        return userServices.listarUsuarios();
-    }
 
     @GetMapping("{id}")
     public UserResponseDTO pegarUsuarioPorId(Long id){
@@ -35,21 +30,23 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDTO dto, HttpSession session){
         try{
-            //UserResponseDTO response = userServices.login(dto);
             UserModel user = userServices.login(dto.getEmail(), dto.getSenha());
             session.setAttribute("usuario", user);
-            return ResponseEntity.ok("Login efetuado.");
+            return ResponseEntity.ok(Map.of("msg", "Login efetuado"));
         } catch (RuntimeException e){
-
-            System.out.println("caiu aqui. Usuario: -" + e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("msg", e.getMessage()));
         }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> cadastrarUsuario(@RequestBody UserDTO dto){
-       UserResponseDTO response = userServices.cadastrarUsuario(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<?> cadastrarUsuario(@RequestBody UserDTO dto){
+       try{
+           UserResponseDTO response = userServices.cadastrarUsuario(dto);
+          return ResponseEntity.status(HttpStatus.CREATED).body(response);
+       } catch (RuntimeException e) {
+          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("msg", e.getMessage()));
+       }
+
     }
 
 }

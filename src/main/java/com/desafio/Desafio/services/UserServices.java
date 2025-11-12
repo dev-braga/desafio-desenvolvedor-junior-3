@@ -40,13 +40,6 @@ public class UserServices {
         return user;
     }
 
-    // Busca todos os usuarios
-    public List<UserResponseDTO> listarUsuarios(){
-        return userRepository.findAll()
-                .stream()
-                .map(this::toResponseUserDTO)
-                .collect(Collectors.toList());
-    }
     // Busca por ID
     public UserResponseDTO buscarPorId(Long id){
         UserModel usuario = userRepository.findById(id)
@@ -57,26 +50,11 @@ public class UserServices {
     public UserResponseDTO cadastrarUsuario(UserDTO userDTO){
         UserModel userModel = toEntity(userDTO);
 
+        if(userRepository.existsByEmail(userModel.getEmail())){
+            throw new RuntimeException("E-mail ja existe");
+        }
         userRepository.save(userModel);
         return toResponseUserDTO(userModel);
-    }
-    // Atualizar --- Depois melhoro as mensagens.
-    public UserResponseDTO atualizaUsuario(Long id, UserDTO userDTO){
-        UserModel usuario = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Nao achei!"));
-
-        usuario.setNome(userDTO.nome);
-        usuario.setEmail(userDTO.email);
-
-        return toResponseUserDTO(usuario);
-    }
-
-    // Deletar usuarios
-    public void deletarUsuario(Long id){
-        if(!userRepository.existsById(id)){
-            new RuntimeException("Nao achei!");
-        }
-        userRepository.deleteById(id);
     }
 
     // Conversoes

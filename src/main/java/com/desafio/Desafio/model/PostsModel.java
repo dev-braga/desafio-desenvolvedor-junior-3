@@ -20,7 +20,6 @@ public class PostsModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dataPost;
     private String titulo;
     private String conteudo;

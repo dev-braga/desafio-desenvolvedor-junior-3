@@ -12,13 +12,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PostServices {
@@ -35,14 +32,10 @@ public class PostServices {
 
        List<PostsModel> posts;
        if(meus && usuarioLogado != null){
-           // Recarrega o usuário do banco
-           UserModel usuario = userRepository.findById(usuarioLogado.getId())
-                           .orElseThrow(() -> new RuntimeException("Nao encontrado"));
-
-           postsRepository.findByAutor(usuarioLogado, sort);
+           posts = postsRepository.findByAutor(usuarioLogado, sort);
+       }else{
+           posts = postsRepository.findAll(sort);
        }
-       posts = postsRepository.findAll(sort);
-        System.out.println("ID do usuário logado: " + usuarioLogado.getId());
        return posts.stream()
                .map(this::toResponse)
                .toList();
