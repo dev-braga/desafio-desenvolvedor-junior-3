@@ -13,11 +13,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostResponseDTO {
+    public Long id;
     public String titulo;
     public String conteudo;
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     public LocalDateTime dataPost;
     public AutorResponseDTO autor;
+
+    public Long getId(){ return id; }
+    public void setId(Long id){ this.id = id; }
 
     public String getTitulo() {
         return titulo;

@@ -88,6 +88,7 @@ public class PostServices {
 
     public PostResponseDTO toResponse(PostsModel postsModel){
         PostResponseDTO dto = new PostResponseDTO();
+        dto.setId(postsModel.getId());
         dto.setTitulo(postsModel.getTitulo());
         dto.setDataPost(postsModel.getDataPost());
         dto.setConteudo(postsModel.getConteudo());

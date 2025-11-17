@@ -24,12 +24,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
             .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable())) // necessário pro H2
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll() // libera o H2 Console
                         .anyRequest().permitAll()
-                )
-                .formLogin(Customizer.withDefaults());
+                );
 
         return httpSecurity.build();
     }

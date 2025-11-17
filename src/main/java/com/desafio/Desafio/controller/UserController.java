@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(originPatterns = "http://localhost:5173")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -32,7 +33,7 @@ public class UserController {
         try{
             UserModel user = userServices.login(dto.getEmail(), dto.getSenha());
             session.setAttribute("usuario", user);
-            return ResponseEntity.ok(Map.of("msg", "Login efetuado"));
+            return ResponseEntity.ok(user);
         } catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("msg", e.getMessage()));
         }
