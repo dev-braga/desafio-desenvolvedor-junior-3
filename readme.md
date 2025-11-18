@@ -1,5 +1,3 @@
-![SoftMakers](https://vagas.softmakers.com.br/assets/img/logotipo14xxhdpi.png)
-
 # Desafio - Desenvolvedor Fullstack Junior 3.
 Seja bem-vindo! Este desafio foi projetado para avaliar a sua capacidade técnica como candidato à vaga de Desenvolvedor Fullstack Junior 3.
 ## Instruções
